@@ -30,6 +30,9 @@ go test -cover ./...
 # Run benchmarks (SSE package)
 go test -bench=. ./sse/...
 
+# Format code
+gofmt -w .
+
 # Run an example bot
 POE_ACCESS_KEY=<key> POE_BOT_NAME=<name> go run ./examples/echo_bot/
 ```
@@ -38,18 +41,21 @@ POE_ACCESS_KEY=<key> POE_BOT_NAME=<name> go run ./examples/echo_bot/
 
 ### Package Structure
 
-Four packages with a strict dependency hierarchy (no cycles):
+Five packages with a strict dependency hierarchy (no cycles):
 
 ```
 types  ←── sse  ←── client
   ↑
   └──── server ────────┘ (server uses sse + types; client uses sse + types)
+
+models  (standalone — no internal deps, only standard library)
 ```
 
 - **`types/`** — Protocol types, constants, and the `BotEvent` interface. All request/response structs, tool definitions, attachment types, UI parameter controls (discriminated unions via `BaseControl`/`FullControl`), and JSON (un)marshaling.
 - **`sse/`** — Minimal SSE implementation: `Reader` (parses SSE streams from `io.Reader`), `Writer` (writes SSE events to `http.ResponseWriter` with flush), and `Event` struct.
 - **`server/`** — Bot hosting framework. `PoeBot` interface + `BasePoeBot` default implementation. `MakeApp()` creates an `http.Handler` for one or more bots. Handles auth, request routing by type, SSE streaming of `BotEvent` channels, attachment processing, message merging, cost API, and settings sync on startup.
 - **`client/`** — Bot Query API client. `StreamRequest()` returns `<-chan *types.PartialResponse`. Supports SSE streaming, retry logic, OpenAI-compatible tool calling (two-pass: aggregate deltas → execute → send results), file upload (multipart + URL modes), and `SyncBotSettings()`.
+- **`models/`** — Model catalog client. `Fetch()` retrieves available Poe models from the public API (`https://api.poe.com/v1/models`). Returns structured types with pricing, context window, architecture, reasoning config, and parameters. No authentication required.
 
 ### Key Patterns
 

@@ -8,6 +8,7 @@ Build custom bots for the [Poe](https://poe.com) platform and call other Poe bot
 
 - **Server** — host custom bots on Poe with SSE streaming, attachment handling, multi-bot support, and cost API
 - **Client** — query other Poe bots with SSE streaming, tool calling, file uploads, and retry logic
+- **Models** — fetch the Poe model catalog with pricing, context window, reasoning config, and parameters
 - **Types** — complete type definitions for the Poe protocol v1.2
 - **SSE** — lightweight Server-Sent Events reader and writer
 
@@ -88,6 +89,7 @@ func main() {
 | [`sse`](./sse) | SSE reader and writer | — |
 | [`server`](./server) | Bot hosting framework with HTTP server | [README](./server/README.md) |
 | [`client`](./client) | Bot Query API client for calling other bots | [README](./client/README.md) |
+| [`models`](./models) | Poe model catalog (pricing, context, reasoning) | [README](./models/README.md) |
 
 ## Examples
 
